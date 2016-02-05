@@ -4,7 +4,11 @@ class Program
 {
     static void Main(string[] args)
     {
-        string input = "3+4*2/(1-5)^2^3"; //Console.ReadLine();
+        string input = Console.ReadLine();
+
+        // 5 + sin(pi) / 2^10 - log(e, e^sqrt(4)) -> 3
+        // 3 / 0 -> exception
+        // log(0, 10) -> exception
 
         MathText.ReversePolishNotation rpn = new MathText.ReversePolishNotation(input);
 

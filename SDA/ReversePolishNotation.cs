@@ -10,21 +10,16 @@
         private Queue output;
         private Stack operators;
         private string originalExpression;
-        private string transitionExpression;
         private string postfixExpression;
 
         public string PostfixExpression
         {
-            get
-            {
-                return this.postfixExpression;
-            }
+            get { return this.postfixExpression; }
         }
 
         public ReversePolishNotation(string input)
         {
             this.originalExpression = input;
-            this.transitionExpression = string.Empty;
             this.postfixExpression = string.Empty;
             this.output = new Queue();
             this.operators = new Stack();
@@ -41,7 +36,7 @@
             // captures these symbols: + - * / ^ ( )
             sBuffer = Regex.Replace(sBuffer, @"(?<ops>[+\-*/^()])", " ${ops} ");
             // captures alphabets
-            sBuffer = Regex.Replace(sBuffer, "(?<alpha>(pi|e|sin|cos|tan))", " ${alpha} ");
+            sBuffer = Regex.Replace(sBuffer, "(?<alpha>(pi|e|sin|cos|tan|log|sqrt))", " ${alpha} ");
             // trims up consecutive spaces and replace it with just one space
             sBuffer = Regex.Replace(sBuffer, @"\s+", " ").Trim();
 
@@ -54,10 +49,8 @@
             // Step 3. Use the tilde ~ as the unary minus operator
             sBuffer = Regex.Replace(sBuffer, "MINUS", "~");
 
-            this.transitionExpression = sBuffer;
-
             // tokenise it!
-            string[] saParsed = sBuffer.Split(" ".ToCharArray());
+            string[] saParsed = sBuffer.Split(new char[] {' '});
             int i = 0;
             double tokenvalue;
             ReversePolishNotationToken token, opstoken;
@@ -272,6 +265,18 @@
                             // If the token is a function token, then push it onto the stack.
                             operators.Push(token);
                             break;
+                        case "log":
+                            token.TokenValueType = TokenType.Logarithm;
+                            // If the token is a function token, then push it onto the stack.
+                            operators.Push(token);
+                            break;
+                        case "sqrt":
+                            token.TokenValueType = TokenType.Root;
+                            // If the token is a function token, then push it onto the stack.
+                            operators.Push(token);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -374,6 +379,12 @@
                             // So, pop the top 2 values from the stack.
                             secondOperator = (double) result.Pop();
                             firstOperator = (double) result.Pop();
+
+                            if (secondOperator.Equals(0))
+                            {
+                                throw new ArgumentException("The divider cannot be 0.");
+                            }
+
                             result.Push(firstOperator/secondOperator);
                         }
                         else
@@ -448,6 +459,41 @@
                             throw new Exception("Evaluation error!");
                         }
                         break;
+                    case TokenType.Logarithm:
+                        if (result.Count >= 2)
+                        {
+                            // So, pop the top 2 values from the stack.
+                            firstOperator = (double) result.Pop();
+                            secondOperator = (double) result.Pop();
+
+                            if (secondOperator.Equals(0))
+                            {
+                                throw new ArgumentException("The base of a logarithm cannon be 0.");
+                            }
+
+                            result.Push(Math.Log(firstOperator, secondOperator));
+                        }
+                        else
+                        {
+                            // (Error) The user has not input sufficient values in the expression.
+                            throw new Exception("Evaluation error!");
+                        }
+                        break;
+                    case TokenType.Root:
+                        if (result.Count >= 2)
+                        {
+                            // So, pop the top value from the stack.
+                            firstOperator = (double) result.Pop();
+                            result.Push(Math.Sqrt(firstOperator));
+                        }
+                        else
+                        {
+                            // (Error) The user has not input sufficient values in the expression.
+                            throw new Exception("Evaluation error!");
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -465,10 +511,11 @@
             }
         }
 
-        private bool IsOperatorToken(TokenType t)
+        private bool IsOperatorToken(TokenType tokenType)
         {
             bool result = false;
-            switch (t)
+
+            switch (tokenType)
             {
                 case TokenType.Plus:
                 case TokenType.Minus:
@@ -482,30 +529,36 @@
                     result = false;
                     break;
             }
+
             return result;
         }
 
-        private bool IsFunctionToken(TokenType t)
+        private bool IsFunctionToken(TokenType tokenType)
         {
             bool result = false;
-            switch (t)
+
+            switch (tokenType)
             {
                 case TokenType.Sine:
                 case TokenType.Cosine:
                 case TokenType.Tangent:
+                case TokenType.Logarithm:
+                case TokenType.Root:
                     result = true;
                     break;
                 default:
                     result = false;
                     break;
             }
+
             return result;
         }
 
-        private double EvaluateConstant(string TokenValue)
+        private double EvaluateConstant(string tokenValue)
         {
             double result = 0.0;
-            switch (TokenValue)
+
+            switch (tokenValue)
             {
                 case "pi":
                     result = Math.PI;
@@ -513,7 +566,10 @@
                 case "e":
                     result = Math.E;
                     break;
+                default:
+                    break;
             }
+
             return result;
         }
     }

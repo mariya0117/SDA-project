@@ -15,6 +15,8 @@
         Cosine,
         Tangent,
         LeftParenthesis,
-        RightParenthesis
+        RightParenthesis,
+        Logarithm,
+        Root
     }
 }
