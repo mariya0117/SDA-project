@@ -1,0 +1,6 @@
+C:\Users\A\Documents\Visual Studio 2013\Projects\CSHARP-fmi\SDA\SDA\bin\Debug\SDA.exe.config
+C:\Users\A\Documents\Visual Studio 2013\Projects\CSHARP-fmi\SDA\SDA\bin\Debug\SDA.exe
+C:\Users\A\Documents\Visual Studio 2013\Projects\CSHARP-fmi\SDA\SDA\bin\Debug\SDA.pdb
+C:\Users\A\Documents\Visual Studio 2013\Projects\CSHARP-fmi\SDA\SDA\obj\Debug\SDA.csprojResolveAssemblyReference.cache
+C:\Users\A\Documents\Visual Studio 2013\Projects\CSHARP-fmi\SDA\SDA\obj\Debug\SDA.exe
+C:\Users\A\Documents\Visual Studio 2013\Projects\CSHARP-fmi\SDA\SDA\obj\Debug\SDA.pdb
